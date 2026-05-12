@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KarlShop – Software Keys</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Syne:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #080a0f; --card: #111520; --card2: #0e1219; --border: #1e2535;
+    --accent: #00d4ff; --accent2: #7b2fff;
+    --text: #e8eaf0; --muted: #5a6280;
+    --red: #ff4d4d; --green: #00e676; --orange: #ffaa00;
+  }
+  body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; overflow-x: hidden; }
+  .logo { font-family: 'Orbitron', monospace; font-weight: 900; font-size: 1.35rem; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .grad { background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #000; border: none; padding: 12px 28px; border-radius: 6px; font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,212,255,0.3); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-danger { background: rgba(255,77,77,0.12); color: var(--red); border: 1px solid rgba(255,77,77,0.25); padding: 8px 16px; border-radius: 5px; font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
+  .btn-danger:hover { background: rgba(255,77,77,0.22); }
+  .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 8px 18px; border-radius: 5px; font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 600; cursor: pointer; letter-spacing: 0.05em; text-transform: uppercase; transition: border-color 0.2s, color 0.2s; }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 32px; right: 32px; background: var(--card); border: 1px solid rgba(0,212,255,0.3); border-radius: 8px; padding: 14px 22px; font-size: 0.85rem; font-weight: 600; color: var(--accent); z-index: 9999; transform: translateY(80px); opacity: 0; transition: transform 0.3s cubic-bezier(.34,1.56,.64,1), opacity 0.3s; box-shadow: 0 0 20px rgba(0,212,255,0.2); max-width: 320px; }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.error { border-color: rgba(255,77,77,0.3); color: var(--red); }
+  .toast.success { border-color: rgba(0,230,118,0.3); color: var(--green); }
+
+  /* OVERLAY */
+  .overlay { position: fixed; inset: 0; background: rgba(4,6,10,0.9); backdrop-filter: blur(10px); z-index: 500; display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+  .overlay.open { opacity: 1; pointer-events: all; }
+  .modal { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 40px; width: 100%; max-width: 540px; box-shadow: 0 40px 80px rgba(0,0,0,0.7); transform: translateY(20px); transition: transform 0.25s; max-height: 90vh; overflow-y: auto; }
+  .overlay.open .modal { transform: translateY(0); }
+  .modal h2 { font-family: 'Orbitron', monospace; font-size: 1.1rem; margin-bottom: 6px; }
+  .modal .sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 28px; }
+  .modal label { display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); margin-bottom: 7px; margin-top: 16px; }
+  .modal label:first-of-type { margin-top: 0; }
+  .modal input, .modal textarea, .modal select { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 7px; padding: 12px 16px; color: var(--text); font-family: 'Syne', sans-serif; font-size: 0.88rem; outline: none; transition: border-color 0.2s; resize: vertical; }
+  .modal input:focus, .modal textarea:focus, .modal select:focus { border-color: var(--accent); }
+  .modal select option { background: #111520; }
+  .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
+
+  /* LOGIN */
+  #login-overlay { z-index: 800; }
+  .login-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 48px; width: 360px; box-shadow: 0 40px 80px rgba(0,0,0,0.7); }
+  .login-box .logo { display: block; margin-bottom: 6px; }
+  .login-box h2 { font-family: 'Orbitron', monospace; font-size: 0.95rem; color: var(--muted); margin-bottom: 32px; }
+  .login-back { display: block; text-align: center; margin-top: 14px; font-size: 0.8rem; color: var(--muted); cursor: pointer; transition: color 0.2s; }
+  .login-back:hover { color: var(--accent); }
+
+  /* SHOP */
+  #shop { display: block; }
+  #admin { display: none; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 18px 48px; background: rgba(8,10,15,0.92); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
+  .nav-links { display: flex; gap: 32px; list-style: none; align-items: center; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.84rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; transition: color 0.2s; cursor: pointer; }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #000 !important; -webkit-text-fill-color: #000 !important; padding: 9px 22px; border-radius: 5px; font-weight: 700 !important; }
+
+  .hero { min-height: 100vh; display: flex; align-items: center; padding: 120px 48px 80px; position: relative; overflow: hidden; }
+  .hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 50% at 70% 50%, rgba(123,47,255,0.13) 0%, transparent 70%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(0,212,255,0.08) 0%, transparent 60%); }
+  .hero-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(30,37,53,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(30,37,53,0.4) 1px, transparent 1px); background-size: 60px 60px; mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%); }
+  .hero-content { position: relative; z-index: 1; max-width: 620px; animation: fadeUp 0.7s ease both; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.2); border-radius: 100px; padding: 6px 16px; font-size: 0.75rem; font-weight: 600; color: var(--accent); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 28px; }
+  .hero-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); padding: 12px 28px; border-radius: 6px; font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .hero-stats { position: absolute; bottom: 60px; right: 48px; display: flex; gap: 48px; }
+  .stat-num { font-family: 'Orbitron', monospace; font-size: 1.8rem; font-weight: 900; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .stat-label { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+
+  section.products { padding: 100px 48px; }
+  .section-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 48px; }
+  .section-title { font-family: 'Orbitron', monospace; font-size: 1.5rem; font-weight: 700; }
+  .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+  .product-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s; }
+  .product-card:hover { transform: translateY(-5px); border-color: rgba(0,212,255,0.25); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  .product-img { width: 100%; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; font-size: 3.2rem; position: relative; }
+  .pbadge { position: absolute; top: 12px; left: 12px; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 9px; border-radius: 3px; }
+  .pbadge.cyan   { background: rgba(0,212,255,0.12); border: 1px solid rgba(0,212,255,0.25); color: var(--accent); }
+  .pbadge.purple { background: rgba(123,47,255,0.12); border: 1px solid rgba(123,47,255,0.25); color: #a06fff; }
+  .pbadge.red    { background: rgba(255,80,80,0.12);  border: 1px solid rgba(255,80,80,0.25);  color: #ff5050; }
+  .pbadge.green  { background: rgba(0,230,118,0.1);   border: 1px solid rgba(0,230,118,0.25);  color: var(--green); }
+  .stock-badge { position: absolute; top: 12px; right: 12px; font-size: 0.65rem; font-weight: 700; padding: 3px 9px; border-radius: 3px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); }
+  .stock-badge.ok  { color: var(--green); border-color: rgba(0,230,118,0.3); }
+  .stock-badge.low { color: var(--orange); border-color: rgba(255,170,0,0.3); }
+  .stock-badge.out { color: var(--red); border-color: rgba(255,77,77,0.3); }
+  .product-info { padding: 18px; border-top: 1px solid var(--border); }
+  .product-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 3px; }
+  .product-cat  { font-size: 0.75rem; color: var(--muted); margin-bottom: 14px; }
+  .product-footer { display: flex; align-items: center; justify-content: space-between; }
+  .product-price { font-family: 'Orbitron', monospace; font-size: 1rem; font-weight: 700; color: var(--accent); }
+  .buy-btn { background: linear-gradient(135deg, var(--accent), var(--accent2)); border: none; color: #000; font-size: 0.75rem; font-weight: 700; padding: 9px 18px; border-radius: 5px; cursor: pointer; font-family: 'Syne', sans-serif; letter-spacing: 0.04em; text-transform: uppercase; transition: opacity 0.2s, transform 0.15s; }
+  .buy-btn:hover { opacity: 0.85; transform: scale(1.04); }
+  .buy-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; background: #333; color: #666; }
+
+  .discord-section { padding: 0 48px 80px; }
+  .discord-banner { background: linear-gradient(135deg, rgba(88,101,242,0.1), rgba(123,47,255,0.07)); border: 1px solid rgba(88,101,242,0.2); border-radius: 16px; padding: 48px; display: flex; align-items: center; justify-content: space-between; gap: 32px; }
+  .discord-icon { font-size: 3rem; flex-shrink: 0; }
+  .discord-text h3 { font-family: 'Orbitron', monospace; font-size: 1.2rem; margin-bottom: 8px; }
+  .discord-text p { color: var(--muted); font-size: 0.9rem; line-height: 1.65; max-width: 480px; }
+  .btn-discord { background: #5865f2; color: #fff; border: none; padding: 14px 28px; border-radius: 6px; font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; cursor: pointer; white-space: nowrap; flex-shrink: 0; transition: background 0.2s, transform 0.2s; }
+  .btn-discord:hover { background: #4752c4; transform: translateY(-2px); }
+  footer { border-top: 1px solid var(--border); padding: 36px 48px; display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 0.8rem; gap: 16px; }
+
+  /* PAYMENT MODAL */
+  .crypto-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 4px; }
+  .crypto-btn { background: var(--bg); border: 1px solid var(--border); border-radius: 7px; padding: 10px 8px; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .crypto-btn:hover, .crypto-btn.selected { border-color: var(--accent); color: var(--accent); background: rgba(0,212,255,0.06); }
+  .crypto-btn .crypto-icon { font-size: 1.2rem; display: block; margin-bottom: 4px; }
+  .pay-address-box { background: var(--bg); border: 1px solid rgba(0,230,118,0.3); border-radius: 10px; padding: 18px; margin: 16px 0; }
+  .pay-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); margin-bottom: 8px; }
+  .pay-amount { font-family: 'Orbitron', monospace; font-size: 1.4rem; font-weight: 900; color: var(--text); margin-bottom: 6px; }
+  .pay-address { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--muted); word-break: break-all; margin-top: 10px; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 6px; border: 1px solid var(--border); cursor: pointer; transition: border-color 0.2s; }
+  .pay-address:hover { border-color: var(--accent); }
+  .pay-status { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; font-weight: 600; margin-top: 12px; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; animation: pulse 1.5s infinite; }
+  .status-dot.waiting { background: var(--orange); }
+  .status-dot.confirmed { background: var(--green); animation: none; }
+  .status-dot.failed { background: var(--red); animation: none; }
+  .timer-bar { height: 3px; background: var(--border); border-radius: 2px; margin-top: 12px; overflow: hidden; }
+  .timer-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; transition: width 1s linear; }
+  .qr-placeholder { width: 120px; height: 120px; background: var(--border); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 0.75rem; margin: 12px auto 0; }
+
+  /* KEY DELIVERY */
+  .key-box { background: var(--bg); border: 1px solid rgba(0,230,118,0.3); border-radius: 10px; padding: 20px 24px; margin: 20px 0; position: relative; }
+  .key-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--green); margin-bottom: 10px; }
+  .key-value { font-family: 'JetBrains Mono', monospace; font-size: 1.05rem; font-weight: 600; color: var(--text); letter-spacing: 0.08em; word-break: break-all; }
+  .copy-btn { position: absolute; top: 14px; right: 14px; background: rgba(0,230,118,0.1); border: 1px solid rgba(0,230,118,0.25); color: var(--green); font-size: 0.7rem; font-weight: 700; padding: 5px 12px; border-radius: 4px; cursor: pointer; font-family: 'Syne', sans-serif; letter-spacing: 0.05em; text-transform: uppercase; transition: background 0.2s; }
+  .copy-btn:hover { background: rgba(0,230,118,0.2); }
+  .instructions-box { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 18px 22px; }
+  .inst-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  .instructions-box p { font-size: 0.87rem; color: var(--text); line-height: 1.7; white-space: pre-wrap; }
+  .delivery-warning { font-size: 0.78rem; color: var(--orange); margin-top: 16px; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ADMIN */
+  .admin-nav { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 18px 48px; background: rgba(8,10,15,0.96); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
+  .admin-nav-left { display: flex; align-items: center; gap: 14px; }
+  .admin-badge { background: rgba(255,77,77,0.12); border: 1px solid rgba(255,77,77,0.25); color: var(--red); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px; border-radius: 3px; }
+  .admin-body { padding: 48px; }
+  .admin-tabs { display: flex; gap: 4px; margin-bottom: 36px; background: var(--card2); border: 1px solid var(--border); border-radius: 8px; padding: 4px; width: fit-content; }
+  .tab-btn { background: none; border: none; color: var(--muted); font-family: 'Syne', sans-serif; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 9px 22px; border-radius: 5px; cursor: pointer; transition: background 0.2s, color 0.2s; }
+  .tab-btn.active { background: var(--card); color: var(--text); box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
+  .section-box { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 32px; margin-bottom: 32px; }
+  .section-box h3 { font-family: 'Orbitron', monospace; font-size: 0.9rem; font-weight: 700; color: var(--accent); letter-spacing: 0.05em; margin-bottom: 24px; }
+  .form-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 60px; gap: 12px; align-items: end; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); }
+  .form-group input, .form-group select, .form-group textarea { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; color: var(--text); font-family: 'Syne', sans-serif; font-size: 0.85rem; outline: none; transition: border-color 0.2s; width: 100%; resize: vertical; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+  .form-group select option { background: #111520; }
+  .table-wrapper { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .table-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid var(--border); }
+  .table-header h3 { font-family: 'Orbitron', monospace; font-size: 0.9rem; font-weight: 700; }
+  table { width: 100%; border-collapse: collapse; }
+  th { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: left; padding: 11px 20px; border-bottom: 1px solid var(--border); }
+  td { padding: 14px 20px; border-bottom: 1px solid rgba(30,37,53,0.4); font-size: 0.87rem; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.015); }
+  .no-row td { text-align: center; padding: 40px; color: var(--muted); }
+  .price-cell { font-family: 'Orbitron', monospace; font-size: 0.88rem; font-weight: 700; color: var(--accent); }
+  .acts { display: flex; gap: 8px; }
+  .btn-edit { background: rgba(0,212,255,0.08); color: var(--accent); border: 1px solid rgba(0,212,255,0.2); padding: 6px 14px; border-radius: 5px; font-family: 'Syne', sans-serif; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
+  .btn-edit:hover { background: rgba(0,212,255,0.16); }
+  .btn-keys { background: rgba(0,230,118,0.08); color: var(--green); border: 1px solid rgba(0,230,118,0.2); padding: 6px 14px; border-radius: 5px; font-family: 'Syne', sans-serif; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
+  .btn-keys:hover { background: rgba(0,230,118,0.16); }
+  .status-pill { display: inline-flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 600; padding: 3px 10px; border-radius: 100px; }
+  .status-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .status-pill.available { background: rgba(0,230,118,0.08); color: var(--green); }
+  .status-pill.available::before { background: var(--green); }
+  .status-pill.new { background: rgba(123,47,255,0.1); color: #a06fff; }
+  .status-pill.new::before { background: #a06fff; }
+  .status-pill.limited { background: rgba(0,212,255,0.08); color: var(--accent); }
+  .status-pill.limited::before { background: var(--accent); }
+  .status-pill.sold { background: rgba(255,77,77,0.08); color: var(--red); }
+  .status-pill.sold::before { background: var(--red); }
+  .keys-panel { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  .keys-panel-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .keys-panel-header h3 { font-family: 'Orbitron', monospace; font-size: 0.9rem; font-weight: 700; }
+  .product-selector { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 8px 14px; color: var(--text); font-family: 'Syne', sans-serif; font-size: 0.85rem; outline: none; cursor: pointer; }
+  .keys-body { padding: 24px; }
+  .key-add-area { display: flex; gap: 10px; margin-bottom: 20px; }
+  .key-add-area textarea { flex: 1; background: var(--bg); border: 1px solid var(--border); border-radius: 7px; padding: 12px 16px; color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 0.83rem; outline: none; resize: none; height: 80px; transition: border-color 0.2s; }
+  .key-add-area textarea:focus { border-color: var(--accent); }
+  .keys-list { display: flex; flex-direction: column; gap: 8px; }
+  .key-item { display: flex; align-items: center; gap: 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 11px 16px; }
+  .key-item.used { opacity: 0.45; }
+  .key-sdot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .key-sdot.available { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .key-sdot.used { background: var(--red); }
+  .key-text { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; flex: 1; word-break: break-all; }
+  .key-used-label { font-size: 0.7rem; color: var(--muted); white-space: nowrap; }
+  .key-del { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1rem; padding: 2px 6px; border-radius: 3px; transition: color 0.2s; }
+  .key-del:hover { color: var(--red); }
+  .no-keys { text-align: center; padding: 32px; color: var(--muted); font-size: 0.88rem; }
+  .order-status { display: inline-flex; align-items: center; gap: 5px; font-size: 0.78rem; font-weight: 600; padding: 3px 10px; border-radius: 100px; }
+  .order-status.finished, .order-status.confirmed { background: rgba(0,230,118,0.08); color: var(--green); }
+  .order-status.waiting, .order-status.confirming { background: rgba(255,170,0,0.08); color: var(--orange); }
+  .order-status.failed, .order-status.expired { background: rgba(255,77,77,0.08); color: var(--red); }
+
+  @media (max-width: 900px) {
+    nav, .admin-nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 100px 24px 140px; }
+    .hero-stats { right: 24px; gap: 24px; }
+    section.products, .discord-section { padding-left: 24px; padding-right: 24px; }
+    .discord-banner { flex-direction: column; text-align: center; }
+    footer { flex-direction: column; text-align: center; }
+    .form-grid { grid-template-columns: 1fr 1fr; }
+    .admin-body { padding: 24px; }
+    .crypto-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- LOGIN -->
+<div class="overlay" id="login-overlay">
+  <div class="login-box">
+    <span class="logo">KARL<span style="opacity:0.35">.</span>SHOP</span>
+    <h2>Admin Access</h2>
+    <label style="font-size:0.7rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:8px">Password</label>
+    <input type="password" id="pwd-input" placeholder="Enter password" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:12px 16px;color:var(--text);font-family:'Syne',sans-serif;font-size:0.9rem;outline:none;margin-bottom:24px;transition:border-color 0.2s" onkeydown="if(event.key==='Enter')tryLogin()">
+    <button class="btn-primary" style="width:100%;padding:14px" onclick="tryLogin()">Sign in</button>
+    <span class="login-back" onclick="closeOverlay('login-overlay')">← Back to shop</span>
+  </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="overlay" id="payment-overlay">
+  <div class="modal" id="payment-modal">
+    <h2 id="pm-title">💳 Checkout</h2>
+    <p class="sub" id="pm-product"></p>
+    <div id="pm-step-currency">
+      <label>Select your cryptocurrency</label>
+      <div class="crypto-grid" id="crypto-grid">
+        <div style="color:var(--muted);font-size:0.85rem;padding:20px;grid-column:1/-1">Loading currencies...</div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="closeOverlay('payment-overlay')">Cancel</button>
+        <button class="btn-primary" id="pm-pay-btn" onclick="createPayment()" disabled>Pay now</button>
+      </div>
+    </div>
+    <div id="pm-step-pay" style="display:none">
+      <div class="pay-address-box">
+        <div class="pay-label">Send exactly</div>
+        <div class="pay-amount" id="pm-amount"></div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-bottom:8px">To this address (click to copy):</div>
+        <div class="pay-address" id="pm-address" onclick="copyAddress()"></div>
+        <div class="pay-status">
+          <div class="status-dot waiting" id="pm-dot"></div>
+          <span id="pm-status-text">Waiting for payment...</span>
+        </div>
+        <div class="timer-bar"><div class="timer-fill" id="pm-timer" style="width:100%"></div></div>
+      </div>
+      <div id="pm-instructions" style="display:none">
+        <p style="font-size:0.78rem;color:var(--muted);text-align:center;margin-bottom:8px">⚠️ Send the exact amount. Partial payments may be lost.</p>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="cancelPayment()">Cancel</button>
+      </div>
+    </div>
+    <div id="pm-step-done" style="display:none">
+      <div class="key-box">
+        <div class="key-label">✅ Payment confirmed — Your License Key</div>
+        <div class="key-value" id="pm-key"></div>
+        <button class="copy-btn" onclick="copyKey()">Copy</button>
+      </div>
+      <div class="instructions-box" id="pm-inst-box" style="display:none">
+        <div class="inst-label">📋 Activation Instructions</div>
+        <p id="pm-inst-text"></p>
+      </div>
+      <div class="delivery-warning">⚠ Save your key — it won't be shown again after closing.</div>
+      <div class="modal-actions"><button class="btn-primary" onclick="closeOverlay('payment-overlay')">Done</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT PRODUCT MODAL -->
+<div class="overlay" id="edit-overlay">
+  <div class="modal">
+    <h2>Edit Product</h2>
+    <p class="sub">Update product details</p>
+    <input type="hidden" id="edit-id">
+    <label>Name</label><input type="text" id="edit-name">
+    <label>Category</label><input type="text" id="edit-cat">
+    <label>Price (USD)</label><input type="number" id="edit-price" step="0.01" min="0">
+    <label>Status</label>
+    <select id="edit-status">
+      <option value="available">Available</option>
+      <option value="new">New</option>
+      <option value="limited">Limited</option>
+      <option value="sold">Sold out</option>
+    </select>
+    <label>Icon (emoji)</label><input type="text" id="edit-icon" maxlength="4" style="font-size:1.4rem;text-align:center;width:80px">
+    <label>Activation Instructions</label>
+    <textarea id="edit-instructions" rows="5" placeholder="Step-by-step instructions shown after purchase..."></textarea>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeOverlay('edit-overlay')">Cancel</button>
+      <button class="btn-primary" onclick="saveEdit()">Save changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SHOP ══ -->
+<div id="shop">
+  <nav>
+    <div class="logo">KARL<span style="opacity:0.35">.</span>SHOP</div>
+    <ul class="nav-links">
+      <li><a onclick="document.querySelector('.products').scrollIntoView({behavior:'smooth'})">Catalog</a></li>
+      <li><a href="#">Accounts</a></li>
+      <li><a href="#">Services</a></li>
+      <li><a href="#" class="nav-cta">Discord</a></li>
+    </ul>
+  </nav>
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <div class="hero-badge">✦ Software Keys & Gaming</div>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="document.querySelector('.products').scrollIntoView({behavior:'smooth'})">Browse catalog</button>
+        <button class="btn-secondary">Join Discord</button>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item"><div class="stat-num">500+</div><div class="stat-label">Happy customers</div></div>
+      <div class="stat-item"><div class="stat-num">4 yrs</div><div class="stat-label">Experience</div></div>
+    </div>
+  </div>
+  <section class="products">
+    <div class="section-header">
+      <h2 class="section-title">Products <span class="grad">available</span></h2>
+    </div>
+    <div class="products-grid" id="shop-grid">
+      <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted)">Loading...</div>
+    </div>
+  </section>
+  <div class="discord-section">
+    <div class="discord-banner">
+      <div class="discord-icon">💬</div>
+      <div class="discord-text">
+        <h3>Order on Discord too</h3>
+        <p>Join our server for exclusive deals, live support, and early drops.</p>
+      </div>
+      <button class="btn-discord">Join →</button>
+    </div>
+  </div>
+  <footer>
+    <div class="logo" style="font-size:1rem">KARL<span style="opacity:0.35">.</span>SHOP</div>
+    <div>© 2026 KarlShop · All rights reserved</div>
+    <span onclick="openLogin()" style="cursor:pointer;color:var(--muted);transition:color 0.2s" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted)'">Admin</span>
+  </footer>
+</div>
+
+<!-- ══ ADMIN ══ -->
+<div id="admin">
+  <div class="admin-nav">
+    <div class="admin-nav-left">
+      <div class="logo">KARL<span style="opacity:0.35">.</span>SHOP</div>
+      <span class="admin-badge">Admin</span>
+    </div>
+    <button class="btn-ghost" onclick="logout()">Log out</button>
+  </div>
+  <div class="admin-body">
+    <div class="admin-tabs">
+      <button class="tab-btn active" onclick="switchTab('products')">Products</button>
+      <button class="tab-btn" onclick="switchTab('keys')">Key Stock</button>
+      <button class="tab-btn" onclick="switchTab('orders')">Orders</button>
+    </div>
+
+    <!-- PRODUCTS TAB -->
+    <div id="tab-products">
+      <div class="section-box">
+        <h3>+ Add product</h3>
+        <div class="form-grid">
+          <div class="form-group"><label>Name</label><input type="text" id="f-name" placeholder="e.g. Windows 11 Pro"></div>
+          <div class="form-group"><label>Category</label><input type="text" id="f-cat" placeholder="e.g. OS"></div>
+          <div class="form-group"><label>Price (USD)</label><input type="number" id="f-price" placeholder="9.99" step="0.01" min="0"></div>
+          <div class="form-group"><label>Status</label>
+            <select id="f-status">
+              <option value="available">Available</option>
+              <option value="new">New</option>
+              <option value="limited">Limited</option>
+              <option value="sold">Sold out</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Icon</label><input type="text" id="f-icon" placeholder="🔑" maxlength="4" style="font-size:1.2rem;text-align:center"></div>
+        </div>
+        <div class="form-group" style="margin-top:14px">
+          <label>Activation Instructions</label>
+          <textarea id="f-instructions" rows="3" placeholder="1. Go to activation page&#10;2. Enter your key&#10;3. Follow instructions..."></textarea>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:14px">
+          <button class="btn-primary" onclick="addProduct()">Add product</button>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <div class="table-header"><h3>Product list</h3><span style="color:var(--muted);font-size:0.8rem" id="product-count"></span></div>
+        <table><thead><tr><th>Icon</th><th>Name</th><th>Category</th><th>Price</th><th>Status</th><th>Keys</th><th>Actions</th></tr></thead>
+        <tbody id="admin-tbody"></tbody></table>
+      </div>
+    </div>
+
+    <!-- KEYS TAB -->
+    <div id="tab-keys" style="display:none">
+      <div class="keys-panel">
+        <div class="keys-panel-header">
+          <h3>Key Stock</h3>
+          <select class="product-selector" id="key-product-select" onchange="loadKeys()"></select>
+        </div>
+        <div class="keys-body">
+          <div class="key-add-area">
+            <textarea id="keys-input" placeholder="Paste keys here — one per line"></textarea>
+            <button class="btn-primary" style="align-self:flex-end;white-space:nowrap" onclick="addKeys()">Add keys</button>
+          </div>
+          <div class="keys-list" id="keys-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDERS TAB -->
+    <div id="tab-orders" style="display:none">
+      <div class="table-wrapper">
+        <div class="table-header"><h3>Order history</h3><button class="btn-ghost" onclick="loadOrders()" style="font-size:0.75rem;padding:6px 14px">↻ Refresh</button></div>
+        <table><thead><tr><th>Payment ID</th><th>Product</th><th>Status</th><th>Key delivered</th><th>Date</th></tr></thead>
+        <tbody id="orders-tbody"></tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ──
+const API = ''; // Vide = même domaine (Railway)
+const POPULAR_CRYPTOS = [
+  { id:'btc', label:'BTC', icon:'₿' },
+  { id:'eth', label:'ETH', icon:'Ξ' },
+  { id:'usdt', label:'USDT', icon:'₮' },
+  { id:'ltc', label:'LTC', icon:'Ł' },
+  { id:'sol', label:'SOL', icon:'◎' },
+  { id:'bnb', label:'BNB', icon:'⬡' },
+  { id:'trx', label:'TRX', icon:'◈' },
+  { id:'doge', label:'DOGE', icon:'Ð' },
+];
+
+// ── STATE ──
+let adminPassword = '';
+let currentPayment = null;
+let pollInterval = null;
+let timerInterval = null;
+let selectedCrypto = null;
+let currentProductId = null;
+
+// ── UTILS ──
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast' + (type ? ' '+type : '');
+  t.classList.add('show'); clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), 3200);
+}
+function openOverlay(id) { document.getElementById(id).classList.add('open'); }
+function closeOverlay(id) { document.getElementById(id).classList.remove('open'); }
+
+const BG = [
+  'linear-gradient(135deg,#0d1520,#0a1a2e)',
+  'linear-gradient(135deg,#150d20,#1a0a2e)',
+  'linear-gradient(135deg,#0d1520,#112010)',
+  'linear-gradient(135deg,#201510,#2e1a0a)',
+  'linear-gradient(135deg,#0a1020,#102030)',
+  'linear-gradient(135deg,#1a0a1a,#2e0a2e)',
+];
+const BADGE = { available:{cls:'green',label:'In stock'}, new:{cls:'purple',label:'New'}, limited:{cls:'cyan',label:'Limited'}, sold:{cls:'red',label:'Sold out'} };
+
+// ── AUTH ──
+function openLogin() { openOverlay('login-overlay'); setTimeout(() => document.getElementById('pwd-input').focus(), 200); }
+async function tryLogin() {
+  const pwd = document.getElementById('pwd-input').value;
+  const res = await fetch(`${API}/api/admin/products`, { headers: { 'x-admin-password': pwd } });
+  if (res.ok) {
+    adminPassword = pwd;
+    closeOverlay('login-overlay');
+    document.getElementById('pwd-input').value = '';
+    document.getElementById('shop').style.display = 'none';
+    document.getElementById('admin').style.display = 'block';
+    loadAdmin();
+  } else {
+    document.getElementById('pwd-input').value = '';
+    showToast('⚠ Wrong password', 'error');
+  }
+}
+function logout() {
+  adminPassword = '';
+  document.getElementById('admin').style.display = 'none';
+  document.getElementById('shop').style.display = 'block';
+  loadShop();
+}
+
+// ── SHOP ──
+async function loadShop() {
+  const res = await fetch(`${API}/api/products`);
+  const products = await res.json();
+  const grid = document.getElementById('shop-grid');
+  if (!products.length) { grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted)">No products available</div>'; return; }
+  grid.innerHTML = products.map((p,i) => {
+    const b = BADGE[p.status] || BADGE.available;
+    const bg = BG[i % BG.length];
+    const noStock = p.status === 'sold' || p.stock === 0;
+    const stockCls = p.stock === 0 ? 'out' : p.stock <= 2 ? 'low' : 'ok';
+    const stockLabel = p.stock === 0 ? 'Out of stock' : p.stock <= 2 ? `${p.stock} left` : `${p.stock} in stock`;
+    return `<div class="product-card">
+      <div class="product-img" style="background:${bg}">
+        ${p.icon}
+        <span class="pbadge ${b.cls}">${b.label}</span>
+        <span class="stock-badge ${stockCls}">${stockLabel}</span>
+      </div>
+      <div class="product-info">
+        <div class="product-name">${esc(p.name)}</div>
+        <div class="product-cat">${esc(p.cat)}</div>
+        <div class="product-footer">
+          <div class="product-price">$${Number(p.price).toFixed(2)}</div>
+          <button class="buy-btn" ${noStock?'disabled':''} onclick="openPayment(${p.id},'${esc(p.name)}')">
+            ${noStock ? 'Out of stock' : 'Buy now'}
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── PAYMENT ──
+async function openPayment(productId, productName) {
+  currentProductId = productId;
+  selectedCrypto = null;
+  document.getElementById('pm-title').textContent = '💳 Checkout';
+  document.getElementById('pm-product').textContent = productName;
+  document.getElementById('pm-step-currency').style.display = 'block';
+  document.getElementById('pm-step-pay').style.display = 'none';
+  document.getElementById('pm-step-done').style.display = 'none';
+  document.getElementById('pm-pay-btn').disabled = true;
+  openOverlay('payment-overlay');
+  renderCryptoGrid();
+}
+
+function renderCryptoGrid() {
+  const grid = document.getElementById('crypto-grid');
+  grid.innerHTML = POPULAR_CRYPTOS.map(c => `
+    <div class="crypto-btn" id="crypto-${c.id}" onclick="selectCrypto('${c.id}')">
+      <span class="crypto-icon">${c.icon}</span>${c.label}
+    </div>`).join('');
+}
+
+function selectCrypto(id) {
+  selectedCrypto = id;
+  document.querySelectorAll('.crypto-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById(`crypto-${id}`)?.classList.add('selected');
+  document.getElementById('pm-pay-btn').disabled = false;
+}
+
+async function createPayment() {
+  if (!selectedCrypto || !currentProductId) return;
+  document.getElementById('pm-pay-btn').disabled = true;
+  document.getElementById('pm-pay-btn').textContent = 'Creating...';
+  try {
+    const res = await fetch(`${API}/api/payment`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId: currentProductId, currency: selectedCrypto })
+    });
+    const data = await res.json();
+    if (!res.ok) { showToast('⚠ ' + (data.error || 'Error'), 'error'); document.getElementById('pm-pay-btn').disabled = false; document.getElementById('pm-pay-btn').textContent = 'Pay now'; return; }
+    currentPayment = data;
+    showPayStep(data);
+  } catch (e) {
+    showToast('⚠ Server error', 'error');
+    document.getElementById('pm-pay-btn').disabled = false;
+    document.getElementById('pm-pay-btn').textContent = 'Pay now';
+  }
+}
+
+function showPayStep(data) {
+  document.getElementById('pm-step-currency').style.display = 'none';
+  document.getElementById('pm-step-pay').style.display = 'block';
+  document.getElementById('pm-amount').textContent = `${data.payAmount} ${data.payCurrency.toUpperCase()}`;
+  document.getElementById('pm-address').textContent = data.payAddress;
+  document.getElementById('pm-dot').className = 'status-dot waiting';
+  document.getElementById('pm-status-text').textContent = 'Waiting for payment...';
+
+  // Timer 20 minutes
+  let seconds = 20 * 60;
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    seconds--;
+    document.getElementById('pm-timer').style.width = (seconds / 1200 * 100) + '%';
+    if (seconds <= 0) { clearInterval(timerInterval); }
+  }, 1000);
+
+  // Polling statut
+  clearInterval(pollInterval);
+  pollInterval = setInterval(() => pollPayment(data.paymentId), 8000);
+}
+
+async function pollPayment(paymentId) {
+  try {
+    const res = await fetch(`${API}/api/order/${paymentId}`);
+    const data = await res.json();
+    const dot = document.getElementById('pm-dot');
+    const txt = document.getElementById('pm-status-text');
+    if (data.status === 'confirming') {
+      dot.className = 'status-dot waiting'; txt.textContent = 'Confirming on blockchain...';
+    } else if (data.status === 'finished' || data.status === 'confirmed') {
+      clearInterval(pollInterval); clearInterval(timerInterval);
+      showDelivery(data);
+    } else if (data.status === 'failed' || data.status === 'expired') {
+      clearInterval(pollInterval); clearInterval(timerInterval);
+      dot.className = 'status-dot failed'; txt.textContent = 'Payment failed or expired.';
+    }
+  } catch {}
+}
+
+function showDelivery(data) {
+  document.getElementById('pm-step-pay').style.display = 'none';
+  document.getElementById('pm-step-done').style.display = 'block';
+  document.getElementById('pm-key').textContent = data.deliveredKey;
+  const instBox = document.getElementById('pm-inst-box');
+  if (data.instructions) {
+    document.getElementById('pm-inst-text').textContent = data.instructions;
+    instBox.style.display = 'block';
+  } else { instBox.style.display = 'none'; }
+  loadShop();
+}
+
+function copyAddress() {
+  navigator.clipboard.writeText(document.getElementById('pm-address').textContent)
+    .then(() => showToast('✓ Address copied!', 'success'));
+}
+function copyKey() {
+  navigator.clipboard.writeText(document.getElementById('pm-key').textContent)
+    .then(() => showToast('✓ Key copied!', 'success'));
+}
+function cancelPayment() {
+  clearInterval(pollInterval); clearInterval(timerInterval);
+  closeOverlay('payment-overlay');
+}
+
+// ── ADMIN ──
+async function loadAdmin() {
+  await loadProducts();
+  populateKeySelect();
+}
+
+function authHeaders() { return { 'x-admin-password': adminPassword, 'Content-Type': 'application/json' }; }
+
+async function loadProducts() {
+  const res = await fetch(`${API}/api/admin/products`, { headers: { 'x-admin-password': adminPassword } });
+  const products = await res.json();
+  document.getElementById('product-count').textContent = products.length + ' product' + (products.length !== 1 ? 's' : '');
+  const tbody = document.getElementById('admin-tbody');
+  if (!products.length) { tbody.innerHTML = '<tr class="no-row"><td colspan="7">No products yet.</td></tr>'; return; }
+  tbody.innerHTML = products.map(p => {
+    const keyColor = p.availableKeys === 0 ? 'var(--red)' : p.availableKeys <= 2 ? 'var(--orange)' : 'var(--green)';
+    return `<tr>
+      <td style="font-size:1.5rem">${p.icon}</td>
+      <td style="font-weight:600">${esc(p.name)}</td>
+      <td style="color:var(--muted)">${esc(p.cat)}</td>
+      <td class="price-cell">$${Number(p.price).toFixed(2)}</td>
+      <td><span class="status-pill ${p.status}">${BADGE[p.status]?.label||p.status}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:${keyColor}">${p.availableKeys} / ${p.totalKeys}</td>
+      <td class="acts">
+        <button class="btn-edit" onclick="openEdit(${p.id})">Edit</button>
+        <button class="btn-keys" onclick="switchTab('keys');setTimeout(()=>{document.getElementById('key-product-select').value=${p.id};loadKeys()},50)">Keys</button>
+        <button class="btn-danger" onclick="deleteProduct(${p.id})">Del</button>
+      </td>
+    </tr>`;
+  }).join('');
+  populateKeySelect(products);
+}
+
+async function addProduct() {
+  const name = document.getElementById('f-name').value.trim();
+  const price = parseFloat(document.getElementById('f-price').value);
+  if (!name) return showToast('⚠ Name required', 'error');
+  if (isNaN(price)) return showToast('⚠ Invalid price', 'error');
+  const body = { name, cat: document.getElementById('f-cat').value.trim() || 'General', price, status: document.getElementById('f-status').value, icon: document.getElementById('f-icon').value.trim() || '🔑', instructions: document.getElementById('f-instructions').value.trim() };
+  const res = await fetch(`${API}/api/admin/products`, { method: 'POST', headers: authHeaders(), body: JSON.stringify(body) });
+  if (res.ok) {
+    showToast('✓ Product added!', 'success');
+    document.getElementById('f-name').value = ''; document.getElementById('f-cat').value = '';
+    document.getElementById('f-price').value = ''; document.getElementById('f-icon').value = '';
+    document.getElementById('f-instructions').value = '';
+    await loadProducts(); loadShop();
+  }
+}
+
+async function openEdit(id) {
+  const res = await fetch(`${API}/api/admin/products`, { headers: { 'x-admin-password': adminPassword } });
+  const products = await res.json();
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('edit-id').value = id;
+  document.getElementById('edit-name').value = p.name;
+  document.getElementById('edit-cat').value = p.cat;
+  document.getElementById('edit-price').value = p.price;
+  document.getElementById('edit-status').value = p.status;
+  document.getElementById('edit-icon').value = p.icon;
+  document.getElementById('edit-instructions').value = p.instructions || '';
+  openOverlay('edit-overlay');
+}
+
+async function saveEdit() {
+  const id = document.getElementById('edit-id').value;
+  const body = { name: document.getElementById('edit-name').value.trim(), cat: document.getElementById('edit-cat').value.trim(), price: parseFloat(document.getElementById('edit-price').value), status: document.getElementById('edit-status').value, icon: document.getElementById('edit-icon').value.trim(), instructions: document.getElementById('edit-instructions').value.trim() };
+  const res = await fetch(`${API}/api/admin/products/${id}`, { method: 'PUT', headers: authHeaders(), body: JSON.stringify(body) });
+  if (res.ok) { closeOverlay('edit-overlay'); showToast('✓ Updated!', 'success'); await loadProducts(); loadShop(); }
+}
+
+async function deleteProduct(id) {
+  if (!confirm('Delete this product?')) return;
+  await fetch(`${API}/api/admin/products/${id}`, { method: 'DELETE', headers: { 'x-admin-password': adminPassword } });
+  showToast('✓ Deleted'); await loadProducts(); loadShop();
+}
+
+// KEYS
+function populateKeySelect(products) {
+  if (!products) return;
+  const sel = document.getElementById('key-product-select');
+  const cur = sel.value;
+  sel.innerHTML = products.length ? products.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('') : '<option value="">No products</option>';
+  if (cur && products.find(p => p.id == cur)) sel.value = cur;
+}
+
+async function loadKeys() {
+  const pid = document.getElementById('key-product-select').value;
+  if (!pid) return;
+  const res = await fetch(`${API}/api/admin/keys/${pid}`, { headers: { 'x-admin-password': adminPassword } });
+  const keys = await res.json();
+  const list = document.getElementById('keys-list');
+  if (!keys.length) { list.innerHTML = '<div class="no-keys">No keys yet. Paste some above.</div>'; return; }
+  list.innerHTML = keys.map((k, i) => `
+    <div class="key-item ${k.used ? 'used' : ''}">
+      <div class="key-sdot ${k.used ? 'used' : 'available'}"></div>
+      <div class="key-text">${esc(k.key)}</div>
+      <div class="key-used-label">${k.used ? '✓ Used · ' + new Date(k.usedAt).toLocaleDateString() : 'Available'}</div>
+      ${!k.used ? `<button class="key-del" onclick="deleteKey(${pid},${i})">✕</button>` : ''}
+    </div>`).join('');
+}
+
+async function addKeys() {
+  const pid = document.getElementById('key-product-select').value;
+  const raw = document.getElementById('keys-input').value.trim();
+  if (!pid || !raw) return showToast('⚠ Select a product and paste keys', 'error');
+  const keys = raw.split('\n').map(l => l.trim()).filter(Boolean);
+  const res = await fetch(`${API}/api/admin/keys/${pid}`, { method: 'POST', headers: authHeaders(), body: JSON.stringify({ keys }) });
+  const data = await res.json();
+  document.getElementById('keys-input').value = '';
+  showToast(`✓ ${data.added} key${data.added!==1?'s':''} added${data.dupes?` (${data.dupes} dupes skipped)`:''}`, 'success');
+  await loadKeys(); await loadProducts();
+}
+
+async function deleteKey(pid, index) {
+  if (!confirm('Remove this key?')) return;
+  await fetch(`${API}/api/admin/keys/${pid}/${index}`, { method: 'DELETE', headers: { 'x-admin-password': adminPassword } });
+  showToast('✓ Key removed'); await loadKeys(); await loadProducts();
+}
+
+// ORDERS
+async function loadOrders() {
+  const res = await fetch(`${API}/api/admin/orders`, { headers: { 'x-admin-password': adminPassword } });
+  const orders = await res.json();
+  const tbody = document.getElementById('orders-tbody');
+  if (!orders.length) { tbody.innerHTML = '<tr class="no-row"><td colspan="5">No orders yet.</td></tr>'; return; }
+  tbody.innerHTML = orders.map(o => `<tr>
+    <td style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--muted)">${o.paymentId}</td>
+    <td style="font-weight:600">${esc(o.productName)}</td>
+    <td><span class="order-status ${o.status}">${o.status}</span></td>
+    <td style="font-family:'JetBrains Mono',monospace;font-size:0.78rem">${o.deliveredKey ? '✓ ' + o.deliveredKey.substring(0,8)+'...' : '—'}</td>
+    <td style="color:var(--muted);font-size:0.8rem">${new Date(o.createdAt).toLocaleString()}</td>
+  </tr>`).join('');
+}
+
+// TABS
+function switchTab(tab) {
+  ['products','keys','orders'].forEach(t => {
+    document.getElementById(`tab-${t}`).style.display = t===tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', ['products','keys','orders'][i]===tab));
+  if (tab==='keys') loadKeys();
+  if (tab==='orders') loadOrders();
+}
+
+// ── INIT ──
+loadShop();
+</script>
+</body>
+</html>
