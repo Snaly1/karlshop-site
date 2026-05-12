@@ -13,6 +13,9 @@ const path      = require('path');
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
+// Railway utilise un reverse proxy — nécessaire pour le rate limiting et les IPs
+app.set('trust proxy', 1);
+
 // ══════════════════════════════════════════
 //  DATABASE
 // ══════════════════════════════════════════
