@@ -457,6 +457,8 @@ const POPULAR_CRYPTOS = [
 
 // ── STATE ──
 let adminPassword = '';
+let adminToken = null;
+let tokenExpiry = null;
 let currentPayment = null;
 let pollInterval = null;
 let timerInterval = null;
@@ -486,23 +488,42 @@ const BADGE = { available:{cls:'green',label:'In stock'}, new:{cls:'purple',labe
 
 // ── AUTH ──
 function openLogin() { openOverlay('login-overlay'); setTimeout(() => document.getElementById('pwd-input').focus(), 200); }
+
 async function tryLogin() {
   const pwd = document.getElementById('pwd-input').value;
-  const res = await fetch(`${API}/api/admin/products`, { headers: { 'x-admin-password': pwd } });
-  if (res.ok) {
-    adminPassword = pwd;
-    closeOverlay('login-overlay');
-    document.getElementById('pwd-input').value = '';
-    document.getElementById('shop').style.display = 'none';
-    document.getElementById('admin').style.display = 'block';
-    loadAdmin();
-  } else {
-    document.getElementById('pwd-input').value = '';
-    showToast('⚠ Wrong password', 'error');
+  if (!pwd) return;
+  const btn = document.querySelector('#login-overlay .btn-primary');
+  btn.disabled = true; btn.textContent = 'Signing in...';
+  try {
+    const res = await fetch(`${API}/api/admin/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pwd })
+    });
+    const data = await res.json();
+    if (res.ok && data.token) {
+      adminToken = data.token;
+      tokenExpiry = Date.now() + (data.expiresIn * 1000);
+      closeOverlay('login-overlay');
+      document.getElementById('pwd-input').value = '';
+      document.getElementById('shop').style.display = 'none';
+      document.getElementById('admin').style.display = 'block';
+      loadAdmin();
+      // Auto-logout quand le token expire
+      setTimeout(logout, data.expiresIn * 1000);
+    } else {
+      document.getElementById('pwd-input').value = '';
+      showToast('⚠ ' + (data.error || 'Wrong password'), 'error');
+    }
+  } catch {
+    showToast('⚠ Server error', 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Sign in';
   }
 }
+
 function logout() {
-  adminPassword = '';
+  adminToken = null; tokenExpiry = null;
   document.getElementById('admin').style.display = 'none';
   document.getElementById('shop').style.display = 'block';
   loadShop();
@@ -661,10 +682,11 @@ async function loadAdmin() {
   populateKeySelect();
 }
 
-function authHeaders() { return { 'x-admin-password': adminPassword, 'Content-Type': 'application/json' }; }
+function authHeaders() { return { 'Authorization': `Bearer ${adminToken}`, 'Content-Type': 'application/json' }; }
 
 async function loadProducts() {
-  const res = await fetch(`${API}/api/admin/products`, { headers: { 'x-admin-password': adminPassword } });
+  const res = await fetch(`${API}/api/admin/products`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
+  if (res.status === 401) { logout(); return; }
   const products = await res.json();
   document.getElementById('product-count').textContent = products.length + ' product' + (products.length !== 1 ? 's' : '');
   const tbody = document.getElementById('admin-tbody');
@@ -705,7 +727,7 @@ async function addProduct() {
 }
 
 async function openEdit(id) {
-  const res = await fetch(`${API}/api/admin/products`, { headers: { 'x-admin-password': adminPassword } });
+  const res = await fetch(`${API}/api/admin/products`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
   const products = await res.json();
   const p = products.find(x => x.id === id);
   if (!p) return;
@@ -728,7 +750,7 @@ async function saveEdit() {
 
 async function deleteProduct(id) {
   if (!confirm('Delete this product?')) return;
-  await fetch(`${API}/api/admin/products/${id}`, { method: 'DELETE', headers: { 'x-admin-password': adminPassword } });
+  await fetch(`${API}/api/admin/products/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${adminToken}` } });
   showToast('✓ Deleted'); await loadProducts(); loadShop();
 }
 
@@ -744,7 +766,7 @@ function populateKeySelect(products) {
 async function loadKeys() {
   const pid = document.getElementById('key-product-select').value;
   if (!pid) return;
-  const res = await fetch(`${API}/api/admin/keys/${pid}`, { headers: { 'x-admin-password': adminPassword } });
+  const res = await fetch(`${API}/api/admin/keys/${pid}`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
   const keys = await res.json();
   const list = document.getElementById('keys-list');
   if (!keys.length) { list.innerHTML = '<div class="no-keys">No keys yet. Paste some above.</div>'; return; }
@@ -771,13 +793,13 @@ async function addKeys() {
 
 async function deleteKey(pid, index) {
   if (!confirm('Remove this key?')) return;
-  await fetch(`${API}/api/admin/keys/${pid}/${index}`, { method: 'DELETE', headers: { 'x-admin-password': adminPassword } });
+  await fetch(`${API}/api/admin/keys/${pid}/${index}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${adminToken}` } });
   showToast('✓ Key removed'); await loadKeys(); await loadProducts();
 }
 
 // ORDERS
 async function loadOrders() {
-  const res = await fetch(`${API}/api/admin/orders`, { headers: { 'x-admin-password': adminPassword } });
+  const res = await fetch(`${API}/api/admin/orders`, { headers: { 'Authorization': `Bearer ${adminToken}` } });
   const orders = await res.json();
   const tbody = document.getElementById('orders-tbody');
   if (!orders.length) { tbody.innerHTML = '<tr class="no-row"><td colspan="5">No orders yet.</td></tr>'; return; }
