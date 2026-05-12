@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KarlShop – Admin</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- EDIT PRODUCT MODAL -->
+<div class="overlay" id="edit-overlay">
+  <div class="modal">
+    <h2>Edit Product</h2>
+    <p class="sub">Update product details</p>
+    <input type="hidden" id="edit-id">
+    <label>Name</label><input type="text" id="edit-name">
+    <label>Category</label><input type="text" id="edit-cat">
+    <label>Price (USD)</label><input type="number" id="edit-price" step="0.01" min="0">
+    <label>Status</label>
+    <select id="edit-status">
+      <option value="available">Available</option>
+      <option value="new">New</option>
+      <option value="limited">Limited</option>
+      <option value="sold">Sold out</option>
+    </select>
+    <label>Icon (emoji)</label>
+    <input type="text" id="edit-icon" maxlength="4" style="font-size:1.4rem;text-align:center;width:80px">
+    <label>Activation Instructions</label>
+    <textarea id="edit-instructions" rows="5" placeholder="Step-by-step instructions shown after purchase..."></textarea>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeOverlay('edit-overlay')">Cancel</button>
+      <button class="btn-primary" onclick="saveEdit()">Save changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN NAV -->
+<div class="admin-nav">
+  <div style="display:flex;align-items:center;gap:14px">
+    <a href="/" class="logo">KARL<span style="opacity:0.35">.</span>SHOP</a>
+    <span class="admin-badge">Admin</span>
+  </div>
+  <button class="btn-ghost" onclick="logout()">Log out</button>
+</div>
+
+<div class="admin-body">
+  <div class="admin-tabs">
+    <button class="tab-btn active" onclick="switchTab('cheats')">🔑 Cheats</button>
+    <button class="tab-btn" onclick="switchTab('accounts')">🎮 Accounts</button>
+    <button class="tab-btn" onclick="switchTab('boosting')">🏆 Boosting</button>
+    <button class="tab-btn" onclick="switchTab('keys')">Key Stock</button>
+    <button class="tab-btn" onclick="switchTab('orders')">Orders</button>
+  </div>
+
+  <!-- CHEATS TAB -->
+  <div id="tab-cheats">
+    <div class="section-box">
+      <h3>+ Add Cheat / Software Key</h3>
+      <div class="form-grid">
+        <div class="form-group"><label>Name</label><input type="text" id="c-name" placeholder="e.g. Windows 11 Pro"></div>
+        <div class="form-group"><label>Category</label><input type="text" id="c-cat" placeholder="e.g. OS"></div>
+        <div class="form-group"><label>Price (USD)</label><input type="number" id="c-price" placeholder="9.99" step="0.01" min="0"></div>
+        <div class="form-group"><label>Status</label>
+          <select id="c-status">
+            <option value="available">Available</option>
+            <option value="new">New</option>
+            <option value="limited">Limited</option>
+            <option value="sold">Sold out</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Icon</label><input type="text" id="c-icon" placeholder="🔑" maxlength="4" style="font-size:1.2rem;text-align:center"></div>
+      </div>
+      <div class="form-group" style="margin-top:14px">
+        <label>Activation Instructions</label>
+        <textarea id="c-instructions" rows="3" placeholder="Step-by-step instructions shown after purchase..."></textarea>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:14px">
+        <button class="btn-primary" onclick="addProduct('cheats')">Add product</button>
+      </div>
+    </div>
+    <div class="table-wrapper">
+      <div class="table-header"><h3>Cheats & Software Keys</h3><span style="color:var(--muted);font-size:0.8rem" id="cheats-count"></span></div>
+      <table><thead><tr><th>Icon</th><th>Name</th><th>Category</th><th>Price</th><th>Status</th><th>Keys</th><th>Actions</th></tr></thead>
+      <tbody id="cheats-tbody"></tbody></table>
+    </div>
+  </div>
+
+  <!-- ACCOUNTS TAB -->
+  <div id="tab-accounts" style="display:none">
+    <div class="section-box">
+      <h3>+ Add Account</h3>
+      <div class="form-grid">
+        <div class="form-group"><label>Name</label><input type="text" id="a-name" placeholder="e.g. R6 Diamond Account"></div>
+        <div class="form-group"><label>Category</label><input type="text" id="a-cat" placeholder="e.g. Rainbow Six"></div>
+        <div class="form-group"><label>Price (USD)</label><input type="number" id="a-price" placeholder="29.99" step="0.01" min="0"></div>
+        <div class="form-group"><label>Status</label>
+          <select id="a-status">
+            <option value="available">Available</option>
+            <option value="new">New</option>
+            <option value="limited">Limited</option>
+            <option value="sold">Sold out</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Icon</label><input type="text" id="a-icon" placeholder="🎮" maxlength="4" style="font-size:1.2rem;text-align:center"></div>
+      </div>
+      <div class="form-group" style="margin-top:14px">
+        <label>Account details / Instructions (shown after purchase)</label>
+        <textarea id="a-instructions" rows="3" placeholder="Login: xxx@email.com&#10;Password: xxxxx&#10;2FA: disabled"></textarea>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:14px">
+        <button class="btn-primary" onclick="addProduct('accounts')">Add account</button>
+      </div>
+    </div>
+    <div class="table-wrapper">
+      <div class="table-header"><h3>Gaming Accounts</h3><span style="color:var(--muted);font-size:0.8rem" id="accounts-count"></span></div>
+      <table><thead><tr><th>Icon</th><th>Name</th><th>Category</th><th>Price</th><th>Status</th><th>Keys</th><th>Actions</th></tr></thead>
+      <tbody id="accounts-tbody"></tbody></table>
+    </div>
+  </div>
+
+  <!-- BOOSTING TAB -->
+  <div id="tab-boosting" style="display:none">
+    <div class="section-box">
+      <h3>🏆 Boosting Prices</h3>
+      <p style="color:var(--muted);font-size:0.88rem;margin-bottom:20px">Boosting prices are displayed from the static page. To modify them, edit the file <code style="background:var(--bg);padding:2px 6px;border-radius:3px;color:var(--accent)">public/boosting.html</code> directly and push to GitHub.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <a href="/boosting.html" target="_blank" class="btn-primary">👁 Preview boosting page</a>
+        <a href="https://discord.gg/karlshop" target="_blank" class="btn-discord">💬 Open Discord</a>
+      </div>
+    </div>
+
+    <div class="section-box">
+      <h3>+ Add Boosting Service (optional)</h3>
+      <p style="color:var(--muted);font-size:0.85rem;margin-bottom:20px">You can also add boosting packages as purchasable products here — clients pay crypto and receive instructions.</p>
+      <div class="form-grid">
+        <div class="form-group"><label>Name</label><input type="text" id="b-name" placeholder="e.g. 10 Wins Rage Boost"></div>
+        <div class="form-group"><label>Category</label><input type="text" id="b-cat" placeholder="e.g. Rage Boost" value="Rage Boost"></div>
+        <div class="form-group"><label>Price (USD)</label><input type="number" id="b-price" placeholder="20.00" step="0.01" min="0"></div>
+        <div class="form-group"><label>Status</label>
+          <select id="b-status">
+            <option value="available">Available</option>
+            <option value="new">New</option>
+            <option value="limited">Limited</option>
+            <option value="sold">Sold out</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Icon</label><input type="text" id="b-icon" placeholder="🏆" maxlength="4" style="font-size:1.2rem;text-align:center"></div>
+      </div>
+      <div class="form-group" style="margin-top:14px">
+        <label>Instructions (shown after purchase)</label>
+        <textarea id="b-instructions" rows="3" placeholder="Open a ticket on Discord with your order ID and username..."></textarea>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:14px">
+        <button class="btn-primary" onclick="addProduct('boosting')">Add service</button>
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <div class="table-header"><h3>Boosting Services</h3><span style="color:var(--muted);font-size:0.8rem" id="boosting-count"></span></div>
+      <table><thead><tr><th>Icon</th><th>Name</th><th>Category</th><th>Price</th><th>Status</th><th>Keys</th><th>Actions</th></tr></thead>
+      <tbody id="boosting-tbody"></tbody></table>
+    </div>
+  </div>
+
+  <!-- KEYS TAB -->
+  <div id="tab-keys" style="display:none">
+    <div class="keys-panel">
+      <div class="keys-panel-header">
+        <h3>Key Stock</h3>
+        <select class="product-selector" id="key-product-select" onchange="loadKeys()"></select>
+      </div>
+      <div class="keys-body">
+        <div class="key-add-area">
+          <textarea id="keys-input" placeholder="Paste keys here — one per line&#10;e.g. XXXXX-XXXXX-XXXXX-XXXXX"></textarea>
+          <button class="btn-primary" style="align-self:flex-end;white-space:nowrap" onclick="addKeys()">Add keys</button>
+        </div>
+        <div class="keys-list" id="keys-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ORDERS TAB -->
+  <div id="tab-orders" style="display:none">
+    <div class="table-wrapper">
+      <div class="table-header">
+        <h3>Order History</h3>
+        <button class="btn-ghost" onclick="loadOrders()" style="font-size:0.75rem;padding:6px 14px">↻ Refresh</button>
+      </div>
+      <table><thead><tr><th>Payment ID</th><th>Product</th><th>Status</th><th>Key delivered</th><th>Date</th></tr></thead>
+      <tbody id="orders-tbody"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<script src="/app.js"></script>
+<script>
+// Check auth on load
+window.addEventListener('DOMContentLoaded', () => {
+  if (!getToken()) { window.location.href = '/'; return; }
+  loadAllProducts();
+});
+
+const TABS = ['cheats','accounts','boosting','keys','orders'];
+const PREFIXES = { cheats:'c', accounts:'a', boosting:'b' };
+
+function switchTab(tab) {
+  TABS.forEach(t => {
+    document.getElementById(`tab-${t}`).style.display = t === tab ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', TABS[i] === tab));
+  if (tab === 'keys') { populateKeySelect(); loadKeys(); }
+  if (tab === 'orders') loadOrders();
+}
+
+async function loadAllProducts() {
+  const res = await fetch('/api/admin/products', { headers: { 'Authorization': `Bearer ${getToken()}` } });
+  if (res.status === 401) { clearToken(); window.location.href = '/'; return; }
+  const products = await res.json();
+
+  // Split by category type
+  const cheats   = products.filter(p => !['Gaming Accounts','Rainbow Six','Rage Boost','Legit Boost','Rank Boost','Boosting'].includes(p.cat));
+  const accounts = products.filter(p => ['Gaming Accounts','Rainbow Six'].includes(p.cat));
+  const boosting = products.filter(p => ['Rage Boost','Legit Boost','Rank Boost','Boosting'].includes(p.cat));
+
+  renderTable('cheats',   cheats);
+  renderTable('accounts', accounts);
+  renderTable('boosting', boosting);
+  populateKeySelect(products);
+}
+
+function renderTable(type, products) {
+  document.getElementById(`${type}-count`).textContent = products.length + ' item' + (products.length !== 1 ? 's' : '');
+  const tbody = document.getElementById(`${type}-tbody`);
+  if (!products.length) { tbody.innerHTML = '<tr class="no-row"><td colspan="7">No items yet.</td></tr>'; return; }
+  const BADGE_ADMIN = { available:'available', new:'new', limited:'limited', sold:'sold' };
+  const BADGE_LABEL = { available:'In stock', new:'New', limited:'Limited', sold:'Sold out' };
+  tbody.innerHTML = products.map(p => {
+    const keyColor = p.available_keys === 0 ? 'var(--red)' : p.available_keys <= 2 ? 'var(--orange)' : 'var(--green)';
+    return `<tr>
+      <td style="font-size:1.5rem">${esc(p.icon)}</td>
+      <td style="font-weight:600">${esc(p.name)}</td>
+      <td style="color:var(--muted)">${esc(p.cat)}</td>
+      <td class="price-cell">$${Number(p.price).toFixed(2)}</td>
+      <td><span class="status-pill ${p.status}">${BADGE_LABEL[p.status]||p.status}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:${keyColor}">${p.available_keys} / ${p.total_keys}</td>
+      <td class="acts">
+        <button class="btn-edit" onclick="openEdit(${p.id})">Edit</button>
+        <button class="btn-keys" onclick="switchTab('keys');setTimeout(()=>{document.getElementById('key-product-select').value=${p.id};loadKeys()},50)">Keys</button>
+        <button class="btn-danger" onclick="deleteProduct(${p.id})">Del</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function addProduct(type) {
+  const p = PREFIXES[type];
+  const name  = document.getElementById(`${p}-name`).value.trim();
+  const price = parseFloat(document.getElementById(`${p}-price`).value);
+  if (!name) return showToast('⚠ Name required', 'error');
+  if (isNaN(price)) return showToast('⚠ Invalid price', 'error');
+  const body = {
+    name,
+    cat:          document.getElementById(`${p}-cat`).value.trim() || 'General',
+    price,
+    status:       document.getElementById(`${p}-status`).value,
+    icon:         document.getElementById(`${p}-icon`).value.trim() || '🔑',
+    instructions: document.getElementById(`${p}-instructions`).value.trim()
+  };
+  const res = await fetch('/api/admin/products', { method:'POST', headers: authHeaders(), body: JSON.stringify(body) });
+  if (res.ok) {
+    showToast('✓ Added!', 'success');
+    [`${p}-name`,`${p}-cat`,`${p}-price`,`${p}-icon`,`${p}-instructions`].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    await loadAllProducts();
+  } else { const d = await res.json(); showToast('⚠ ' + d.error, 'error'); }
+}
+
+async function openEdit(id) {
+  const res = await fetch('/api/admin/products', { headers: { 'Authorization': `Bearer ${getToken()}` } });
+  const products = await res.json();
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('edit-id').value = id;
+  document.getElementById('edit-name').value = p.name;
+  document.getElementById('edit-cat').value = p.cat;
+  document.getElementById('edit-price').value = p.price;
+  document.getElementById('edit-status').value = p.status;
+  document.getElementById('edit-icon').value = p.icon;
+  document.getElementById('edit-instructions').value = p.instructions || '';
+  openOverlay('edit-overlay');
+}
+
+async function saveEdit() {
+  const id = document.getElementById('edit-id').value;
+  const body = {
+    name:         document.getElementById('edit-name').value.trim(),
+    cat:          document.getElementById('edit-cat').value.trim(),
+    price:        parseFloat(document.getElementById('edit-price').value),
+    status:       document.getElementById('edit-status').value,
+    icon:         document.getElementById('edit-icon').value.trim(),
+    instructions: document.getElementById('edit-instructions').value.trim()
+  };
+  const res = await fetch(`/api/admin/products/${id}`, { method:'PUT', headers: authHeaders(), body: JSON.stringify(body) });
+  if (res.ok) { closeOverlay('edit-overlay'); showToast('✓ Updated!', 'success'); await loadAllProducts(); }
+  else { const d = await res.json(); showToast('⚠ ' + d.error, 'error'); }
+}
+
+async function deleteProduct(id) {
+  if (!confirm('Delete this product?')) return;
+  await fetch(`/api/admin/products/${id}`, { method:'DELETE', headers: { 'Authorization': `Bearer ${getToken()}` } });
+  showToast('✓ Deleted'); await loadAllProducts();
+}
+
+function populateKeySelect(products) {
+  if (!products) return;
+  const sel = document.getElementById('key-product-select');
+  const cur = sel.value;
+  sel.innerHTML = products.length ? products.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('') : '<option>No products</option>';
+  if (cur && products.find(p => p.id == cur)) sel.value = cur;
+}
+
+async function loadKeys() {
+  const pid = document.getElementById('key-product-select').value;
+  if (!pid) return;
+  const res = await fetch(`/api/admin/keys/${pid}`, { headers: { 'Authorization': `Bearer ${getToken()}` } });
+  const keys = await res.json();
+  const list = document.getElementById('keys-list');
+  if (!keys.length) { list.innerHTML = '<div class="no-keys">No keys yet. Paste some above.</div>'; return; }
+  list.innerHTML = keys.map(k => `
+    <div class="key-item ${k.used ? 'used' : ''}">
+      <div class="key-sdot ${k.used ? 'used' : 'available'}"></div>
+      <div class="key-text">${esc(k.key_value)}</div>
+      <div class="key-used-label">${k.used ? '✓ Used · ' + new Date(k.used_at).toLocaleDateString() : 'Available'}</div>
+      ${!k.used ? `<button class="key-del" onclick="deleteKey(${pid},${k.id})">✕</button>` : ''}
+    </div>`).join('');
+}
+
+async function addKeys() {
+  const pid = document.getElementById('key-product-select').value;
+  const raw = document.getElementById('keys-input').value.trim();
+  if (!pid || !raw) return showToast('⚠ Select a product and paste keys', 'error');
+  const keys = raw.split('\n').map(l => l.trim()).filter(Boolean);
+  const res = await fetch(`/api/admin/keys/${pid}`, { method:'POST', headers: authHeaders(), body: JSON.stringify({ keys }) });
+  const data = await res.json();
+  document.getElementById('keys-input').value = '';
+  showToast(`✓ ${data.added} key${data.added!==1?'s':''} added${data.dupes?` (${data.dupes} dupes skipped)`:''}`, 'success');
+  await loadKeys(); await loadAllProducts();
+}
+
+async function deleteKey(pid, id) {
+  if (!confirm('Remove this key?')) return;
+  await fetch(`/api/admin/keys/${id}`, { method:'DELETE', headers: { 'Authorization': `Bearer ${getToken()}` } });
+  showToast('✓ Key removed'); await loadKeys(); await loadAllProducts();
+}
+
+async function loadOrders() {
+  const res = await fetch('/api/admin/orders', { headers: { 'Authorization': `Bearer ${getToken()}` } });
+  const orders = await res.json();
+  const tbody = document.getElementById('orders-tbody');
+  if (!orders.length) { tbody.innerHTML = '<tr class="no-row"><td colspan="5">No orders yet.</td></tr>'; return; }
+  tbody.innerHTML = orders.map(o => `<tr>
+    <td style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--muted)">${esc(o.payment_id)}</td>
+    <td style="font-weight:600">${esc(o.product_name||'?')}</td>
+    <td><span class="order-status ${o.status}">${o.status}</span></td>
+    <td style="font-family:'JetBrains Mono',monospace;font-size:0.78rem">${o.delivered_key ? '✓ ' + o.delivered_key.substring(0,8)+'...' : '—'}</td>
+    <td style="color:var(--muted);font-size:0.8rem">${new Date(o.created_at).toLocaleString()}</td>
+  </tr>`).join('');
+}
+</script>
+</body>
+</html>

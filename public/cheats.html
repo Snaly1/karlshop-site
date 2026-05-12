@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KarlShop – Cheats & Software Keys</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- PAYMENT MODAL -->
+<div class="overlay" id="payment-overlay">
+  <div class="modal">
+    <h2>💳 Checkout</h2>
+    <p class="sub" id="pm-product"></p>
+    <div id="pm-step-currency">
+      <label>Select your cryptocurrency</label>
+      <div class="crypto-grid" id="crypto-grid"></div>
+      <div class="modal-actions">
+        <button class="btn-ghost" onclick="cancelPayment()">Cancel</button>
+        <button class="btn-primary" id="pm-pay-btn" onclick="createPayment()" disabled>Pay now</button>
+      </div>
+    </div>
+    <div id="pm-step-pay" style="display:none">
+      <div class="pay-address-box">
+        <div class="pay-label">Send exactly</div>
+        <div class="pay-amount" id="pm-amount"></div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-bottom:8px">To this address (click to copy):</div>
+        <div class="pay-address" id="pm-address" onclick="copyAddress()"></div>
+        <div class="pay-status">
+          <div class="status-dot waiting" id="pm-dot"></div>
+          <span id="pm-status-text">Waiting for payment...</span>
+        </div>
+        <div class="timer-bar"><div class="timer-fill" id="pm-timer" style="width:100%"></div></div>
+      </div>
+      <p style="font-size:0.78rem;color:var(--muted);text-align:center">⚠️ Send the exact amount. Partial payments may be lost.</p>
+      <div class="modal-actions"><button class="btn-ghost" onclick="cancelPayment()">Cancel</button></div>
+    </div>
+    <div id="pm-step-done" style="display:none">
+      <div class="key-box">
+        <div class="key-label">✅ Payment confirmed — Your License Key</div>
+        <div class="key-value" id="pm-key"></div>
+        <button class="copy-btn" onclick="copyKey()">Copy</button>
+      </div>
+      <div class="instructions-box" id="pm-inst-box" style="display:none">
+        <div class="inst-label">📋 Activation Instructions</div>
+        <p id="pm-inst-text"></p>
+      </div>
+      <div class="delivery-warning">⚠ Save your key — it won't be shown again after closing.</div>
+      <div class="modal-actions"><button class="btn-primary" onclick="closeOverlay('payment-overlay')">Done</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="/" class="logo">KARL<span style="opacity:0.35">.</span>SHOP</a>
+  <ul class="nav-links">
+    <li><a href="/cheats.html" class="active">Cheats</a></li>
+    <li><a href="/accounts.html">Accounts</a></li>
+    <li><a href="/boosting.html">Boosting</a></li>
+    <li><a href="https://discord.gg/karlshop" target="_blank" class="nav-discord">Discord</a></li>
+  </ul>
+</nav>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-bg"></div>
+  <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);border-radius:100px;padding:6px 16px;font-size:0.75rem;font-weight:600;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:20px">✦ Software Keys</div>
+  <h1>Cheats & <span class="grad">Software</span></h1>
+  <p style="margin-top:8px">Instant delivery after crypto payment. All keys are tested and guaranteed.</p>
+</div>
+
+<!-- PRODUCTS -->
+<section style="padding:0 48px 80px">
+  <div id="products-grid" class="products-grid">
+    <div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted)">Loading...</div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="logo" style="font-size:1rem">KARL<span style="opacity:0.35">.</span>SHOP</div>
+  <div>© 2026 KarlShop · All rights reserved</div>
+  <a href="https://discord.gg/karlshop" target="_blank" style="color:var(--muted);text-decoration:none">Discord</a>
+</footer>
+
+<script src="/app.js"></script>
+<script>
+async function loadProducts() {
+  const res = await fetch('/api/products');
+  const products = await res.json();
+  const grid = document.getElementById('products-grid');
+  if (!products.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted)"><span style="font-size:3rem;display:block;margin-bottom:12px">🔑</span>No products available yet.</div>';
+    return;
+  }
+  grid.innerHTML = products.map((p, i) => {
+    const b = BADGE[p.status] || BADGE.available;
+    const bg = BG[i % BG.length];
+    const noStock = p.status === 'sold' || p.stock === 0;
+    const stockCls = p.stock === 0 ? 'out' : p.stock <= 2 ? 'low' : 'ok';
+    const stockLabel = p.stock === 0 ? 'Out of stock' : p.stock <= 2 ? `${p.stock} left` : `${p.stock} in stock`;
+    return `<div class="product-card">
+      <div class="product-img" style="background:${bg}">
+        ${esc(p.icon)}
+        <span class="pbadge ${b.cls}">${b.label}</span>
+        <span class="stock-badge ${stockCls}">${stockLabel}</span>
+      </div>
+      <div class="product-info">
+        <div class="product-name">${esc(p.name)}</div>
+        <div class="product-cat">${esc(p.cat)}</div>
+        <div class="product-footer">
+          <div class="product-price">$${Number(p.price).toFixed(2)}</div>
+          <button class="buy-btn" ${noStock ? 'disabled' : ''} onclick="openPayment(${p.id}, '${esc(p.name)}')">
+            ${noStock ? 'Out of stock' : 'Buy now'}
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+loadProducts();
+</script>
+</body>
+</html>
