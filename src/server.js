@@ -261,7 +261,10 @@ app.post('/api/payment', paymentLimiter, validate(schemas.payment), async (req, 
       })
     });
     const data = await resp.json();
-    if (!resp.ok) return res.status(500).json({ error: 'Payment creation failed' });
+    if (!resp.ok) {
+      console.error('[NWP]', resp.status, JSON.stringify(data));
+      return res.status(500).json({ error: data.message || data.error || 'Payment creation failed' });
+    }
 
     await db.query(
       'INSERT INTO orders (payment_id, product_id, status, ip_hash) VALUES ($1,$2,$3,$4)',
