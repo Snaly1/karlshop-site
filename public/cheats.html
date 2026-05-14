@@ -90,7 +90,8 @@
 <script>
 async function loadProducts() {
   const res = await fetch('/api/products');
-  const products = await res.json();
+  const all = await res.json();
+  const products = all.filter(p => p.cat.toLowerCase() !== 'accounts');
   const grid = document.getElementById('products-grid');
   if (!products.length) {
     grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted)"><span style="font-size:3rem;display:block;margin-bottom:12px">🔑</span>No products available yet.</div>';
